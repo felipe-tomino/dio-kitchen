@@ -6,14 +6,13 @@ WORKDIR /home/node/app
 
 COPY package*.json ./
 
+RUN apt-get update && apt-get install libsasl2-dev libsasl2-modules
+
 USER node
 
 RUN yarn
 
 COPY --chown=node:node . .
-
-ARG CONSUMER_TYPE
-ENV CONSUMER_TYPE $CONSUMER_TYPE
 
 # EXPOSE 8080
 # CMD [ "yarn", "prod" ]
