@@ -15,7 +15,6 @@ export default class OrderConsumer extends KafkaConsumer {
     private readonly balconyProducer: BalconyProducer,
     consumerType: 'Cooker' | 'Bartender',
   ) {
-    // const config: ConsumerGlobalConfig = ;
     super(process.env.KAFKA_PASSWORD
       ? {
         'group.id': consumerType,
