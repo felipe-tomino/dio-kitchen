@@ -13,7 +13,7 @@ export type Order = {
 export default class OrderConsumer extends KafkaConsumer {
   constructor(
     private readonly balconyProducer: BalconyProducer,
-    consumerType: 'Cooker' | 'Bartender',
+    private readonly consumerType: 'Cooker' | 'Bartender',
   ) {
     super(process.env.KAFKA_PASSWORD
       ? {
@@ -31,7 +31,7 @@ export default class OrderConsumer extends KafkaConsumer {
         'metadata.broker.list': process.env.KAFKA_BROKER_URI || 'localhost:9092',
       }, {});
 
-    const topicName = `${process.env.KAFKA_TOPIC_PREFIX || ''}${consumerType === 'Cooker' ? 'food' : 'drinks'}`;
+    const topicName = `${process.env.KAFKA_TOPIC_PREFIX || ''}order`;
     super
       .on('ready', () => {
         super.subscribe([topicName]);
@@ -43,11 +43,16 @@ export default class OrderConsumer extends KafkaConsumer {
   }
 
   async prepareOrder(order: Order): Promise<void> {
+    if (this.consumerType === 'Cooker') {
+      delete order.drinks;
+    } else {
+      delete order.food;
+    }
     const { id, ...rest } = order;
     const timeToPrepare = Math.floor(Math.random() * 7 + 3);
-    console.log('\x1b[46m%s\x1b[0m', `Preparing order '${id.split('-')[0]}' (will take ${timeToPrepare}s): ${JSON.stringify(Object.values(rest)[0])}`);
+    console.log('\x1b[46m%s\x1b[0m', `Preparing order '${id}' (will take ${timeToPrepare}s): ${JSON.stringify(rest)}`);
     sleep(timeToPrepare);
-    console.log('\x1b[44m%s\x1b[0m', `Finished order '${id.split('-')[0]}' preparing, sending to balcony...`);
+    console.log('\x1b[44m%s\x1b[0m', `Finished order '${id}' preparing, sending to balcony...`);
     this.balconyProducer.sendOrderToBalcony(order);
   }
 
