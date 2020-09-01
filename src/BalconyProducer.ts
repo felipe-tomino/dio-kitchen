@@ -25,7 +25,7 @@ export default class BalconyProducer extends Producer {
   sendOrderToBalcony(order: Order): void {
     const topic = order.table ? 'balcony' : 'deliveryBalcony'
     super.produce(`${process.env.KAFKA_TOPIC_PREFIX || ''}${topic}`, null, Buffer.from(JSON.stringify(order)));
-    console.log(`Order ${order.id} ${Object.keys(order).includes('food') ? 'food' : 'drinks'} sent to the ${topic}!`);
+    console.log('\x1b[42m%s\x1b[0m', `Order ${order.id.split('-')[0]} ${Object.keys(order).includes('food') ? 'food' : 'drinks'} sent to the ${topic}!`);
   }
 
   start(): void {

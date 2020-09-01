@@ -45,9 +45,9 @@ export default class OrderConsumer extends KafkaConsumer {
   async prepareOrder(order: Order): Promise<void> {
     const { id, ...rest } = order;
     const timeToPrepare = Math.floor(Math.random() * 7 + 3);
-    console.log(`Preparing order '${id}' (will take ${timeToPrepare}s): ${JSON.stringify(Object.values(rest)[0])}`);
+    console.log('\x1b[46m%s\x1b[0m', `Preparing order '${id.split('-')[0]}' (will take ${timeToPrepare}s): ${JSON.stringify(Object.values(rest)[0])}`);
     sleep(timeToPrepare);
-    console.log(`Finished order '${id}' preparing, sending to balcony...`);
+    console.log('\x1b[44m%s\x1b[0m', `Finished order '${id.split('-')[0]}' preparing, sending to balcony...`);
     this.balconyProducer.sendOrderToBalcony(order);
   }
 
